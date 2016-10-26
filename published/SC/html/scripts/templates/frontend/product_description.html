@@ -1,0 +1,10 @@
+<div>
+{if !$CPT_CONSTRUCTOR_MODE}
+	{if $product_info.description}
+        <h3 style="text-align: left">Описание:</h3>
+        {$product_info.description}
+    {/if}
+{else}
+	{'demoprd_description'|translate}
+{/if}
+</div>

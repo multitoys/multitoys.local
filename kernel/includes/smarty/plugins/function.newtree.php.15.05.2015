@@ -1,0 +1,53 @@
+<?php
+function smarty_function_newtree($params, &$smarty){
+    $disp='<ul id="navmenu-v"> ';
+    $sql='SELECT categoryID, slug, parent, '.LanguagesManager::sql_prepareField('name').' AS name from '.CATEGORIES_TABLE. ' where parent=1 order by sort_order,name';
+    if($r=mysql_query($sql)){
+        while($res=mysql_fetch_assoc($r)) {
+            if ($res['slug'] == 'akcija') {
+                $a = 'style="color: red;text-shadow: 1px 1px 3px rgb(200, 104, 104),-1px -1px 3px rgb(255,255,255);"';
+            } else {
+                $a = '';
+            }
+            $disp .= '<li aria-haspopup="true">';
+            if ($res['slug'] != '')
+                $disp .= '<a '.$a.' href="/category/' . $res['slug'] . '/" aria-haspopup="true">' . $res['name'] . '</a>';
+            else
+                $disp .= '<a href="?categoryID=' . $res['categoryID'] . '">' . $res['name'] . '</a>';
+            $disp .= subcat($res['categoryID']) . '';
+        }
+    }
+  $disp.='</li><li>
+						<a href="/auxpage_new_items/">Последние поступления</a>
+              </li>';
+	if ($_SESSION['cs_vip'] == 1) {
+		$disp.='<li><a href="/auxpage_divoland/">Диволенд</a></li>
+		        <li><a href="/auxpage_mixtoys/">Микстойс</a></li>
+                <li><a href="/auxpage_dreamtoys/">Веселка</a></li></ul>';
+	} else {
+		$disp.='</ul>';
+	}
+  return $disp; 
+  } 
+
+	function subcat($parid){
+		$sql='SELECT categoryID, slug, parent, '.LanguagesManager::sql_prepareField('name').' AS name from '.CATEGORIES_TABLE. ' where parent='.$parid.' order by sort_order, name';
+		if($r=mysql_query($sql)){
+			if(mysql_num_rows($r)>0){
+				$disp ='<ul class="animated slideInLeft">';
+				while($res=mysql_fetch_assoc($r)){
+					$disp.='<li>';
+					if($_GET['categoryID'] == $res['categoryID']) ;
+						if($res['slug']!='')
+							$disp.='<a href="/category/'.$res['slug'].'/">'.$res['name'].'</a>';
+						else
+							$disp.='<a href="?categoryID='.$res['categoryID'].'">'.$res['name'].'</a>';
+							$disp.=subcat($res['categoryID']).'';
+				}
+				$disp.='</li></ul>';
+			}
+		}
+		return $disp;
+	}
+
+?>

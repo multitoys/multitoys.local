@@ -1,0 +1,28 @@
+{* product top *}
+<center>
+<div class="product_topview_area">
+
+	<h1>{"str_items_sold_items"|translate}</h1>
+
+    <ul>
+        {foreach from=$items_sold item=_items_sold}
+        <li>
+            <div class="topview-pict">
+                {if $_items_sold.thumbnail || $_items_sold.picture}
+                    <a href='{"?productID=`$_items_sold.productID`&product_slug=`$_items_sold.slug`"|set_query_html}'>
+                        <img src="{$smarty.const.URL_PRODUCTS_PICTURES}/{if $_items_sold.thumbnail}{$_items_sold.thumbnail|escape:'url'}{else}{$_items_sold.picture|escape:'url'}{/if}"
+                            alt="{$_items_sold.name|escape:'html'}" title="{$_items_sold.name|escape:'html'}"></a>
+                {/if}
+
+                <p><a href='{"?productID=`$_items_sold.productID`&product_slug=`$_items_sold.slug`"|set_query_html}'>{$_items_sold.name}</a></p>
+            </div>
+            <div class="topview-price">
+                {if $_items_sold.Price}{$_items_sold.price_str}{/if}
+            </div>
+        </li>
+        {/foreach}
+    </ul>
+    <div class="clear"></div>
+
+</div>
+</center>

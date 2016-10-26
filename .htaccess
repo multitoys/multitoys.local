@@ -1,0 +1,51 @@
+# WebAsyst .htaccess config
+AddDefaultCharset UTF-8
+RewriteEngine On
+
+RewriteCond %{HTTP_HOST} ^www\.(.*) [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^shop/(repo_themes|js|3rdparty|images_common|products_pictures|images|themes|css)/(.*)$ published/SC/html/scripts/$1/$2?frontend=1 [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^shop/(imgval.php|wbs_messageserserver.php) published/SC/html/scripts/$1 [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^(repo_themes|js|3rdparty|images_common|products_pictures|images|themes|css)/(.*)$ published/SC/html/scripts/$1/$2?frontend=1 [L]
+RewriteRule ^(search_pictures)/(.*)$ published/publicdata/MULTITOYS/attachments/SC/$1/$2?frontend=1 [L]
+RewriteRule ^(pictures)/(.*)$ published/publicdata/MULTITOYS/attachments/SC/products_$1/$2?frontend=1 [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^(imgval.php|wbs_messageserserver.php|get_file.php) published/SC/html/scripts/$1 [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^shop/(.*) shop/get_file.php$1 [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^shop(.*) published/SC/html/scripts/$1&frontend=1 [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^login/(.*) login/index.php [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^installer/(.*) installer/index.php [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteRule ^published/$ published/index.php [L]
+
+#RewriteCond  %{REQUEST_FILENAME} !-f
+#RewriteRule ^published/SC/html/scripts/.*$ index.php [L]
+
+RewriteCond  %{REQUEST_FILENAME} !-f
+RewriteCond  %{REQUEST_URI} !^published
+RewriteRule (.*) published/SC/html/scripts/index.php?__furl_path=$1&frontend=1 [QSA]
+
+#RewriteCond %{REQUEST_URI} !\?
+#RewriteCond %{REQUEST_URI} !\&
+#RewriteCond %{REQUEST_URI} !\=
+#RewriteCond %{REQUEST_URI} !\.
+#RewriteCond %{REQUEST_URI} !\/$
+#RewriteRule ^(.*[^/])$ /$1/ [R=301,L]
+RewriteRule .*?/([A-Za-z_]+)/([0-9]+)/([0-9]+)/$ &made=$1&date=$2&p=$3 [L]
+RewriteRule .*?/([A-Za-z_]+)/([0-9]+)/([A-Za-z_]+)/([A-Za-z_]+)/([0-9]+)/$ &made=$1&date=$2&sort=$3&direction=$4&p=$5 [L]

@@ -1,0 +1,39 @@
+<?php
+
+function smarty_function_get_topproducts( $params, &$smarty )
+{
+    if( !empty($params["var"]) )
+    {
+        $where = "";
+        $limit = isset($params["limit"]) ? "LIMIT ".(int)$params["limit"] : "";
+        $top = $params["var"];
+
+        if( CONF_CHECKSTOCK ) {
+            $where .= " AND ";
+            $where .= "in_stock > 0";
+        }
+
+        $sql = "
+            SELECT productID, ".LanguagesManager::sql_prepareField("name")." AS name,
+            Price, list_price, akcia_skidka, default_picture, slug FROM ".PRODUCTS_TABLE."
+            WHERE enabled != 0 AND categoryID > 1 AND $top > 0 ".$where."
+            ORDER BY  RAND() ".$limit."
+        ";
+        $q = db_query($sql);
+        $products=array();
+        while( $row = db_fetch_row($q) )
+        {
+            $row["productID_str"] = $row["productID"];
+            $row["price_str"] = show_price($row["Price"]);
+				$row["list_price_str"] = show_price($row["list_price"]);
+				$row["akcia_skidka_str"] = show_price($row["list_price"]);
+            $products[] = $row;
+        }
+
+        _setPictures($products);
+
+        $smarty->assign($params["var"], $products);
+    }
+}
+
+?>

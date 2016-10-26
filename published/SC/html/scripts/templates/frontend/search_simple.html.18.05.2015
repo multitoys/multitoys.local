@@ -1,0 +1,229 @@
+{*<script type="text/javascript" src="{$smarty.const.URL_JS}/category.js"></script>*}
+{* simple search *}
+
+{if $products_to_show_count > 0}
+<div class="product_brief_head">
+	<p id="cat_path">{$page_title|escape:'html'} {"srch_found"|translate} <b>{$products_found}</b> {"srch_products_plural"|translate}</p>
+<button class="my-button addall" onclick="add_all2cart();">Заказать все</button>
+	{*if $string_product_sort}<p id="cat_product_sort">{$string_product_sort}</p>{/if*}
+{*
+@features "Products comparison"
+*}
+	{*if $smarty.const.CONF_ALLOW_COMPARISON_FOR_SIMPLE_SEARCH}
+	{include file="comparison_products_button.html"}
+	{/if*}
+{*
+@features
+*}
+
+	{if $search_navigator}<p class='navigator'>{$search_navigator}</p>{/if}
+	
+				<!-- Шапка таблицы -->
+				{*include file="product_brief_head_search.html"*}
+<div class="shapka" id="font-105">
+<table class="cs_product_info">
+	  <tbody>
+      <tr>
+	    <td width="160px">
+      </td>
+	    <td>
+          <div class="{if $sort=='name'} z_sort_active {else} z_sort_inactive {/if}">
+            <a href="/search&searchstring={$searchstring}&sort=name&direction={if $direction=='ASC'}DESC{else}ASC{/if}">
+              <table><tr><td style="padding-left:5px;"><div class="arbopr" title="Отсортировать по Наименованию">Наименование&nbsp;</div>
+                <div class="{if $direction=='ASC'&&$sort=='name'}z_sort_desc{else}z_sort_asc{/if}"></div>
+              </td></tr></table>
+            </a>
+          </div>
+      </td>
+	    <td width="100px">
+        <div class="{if $sort=='product_code'} z_sort_active {else} z_sort_inactive {/if}">
+          <a href="/search&searchstring={$searchstring}&sort=product_code&direction={if $direction=='ASC'}DESC{else}ASC{/if}">
+    	      <table width="100px"><tr><td><div class="arbopr" title="Отсортировать по Артикулу">Артикул</div>
+                <div class="{if $direction=='ASC'&&$sort=='product_code'}z_sort_desc{else}z_sort_asc{/if}"></div>
+              </td></tr></table>
+          </a>
+        </div>
+      </td>
+      <td width="60px">
+          <div class="{if $sort=='Bonus'} z_sort_active {else} z_sort_inactive {/if}">
+            <a href="/search&searchstring={$searchstring}&sort=Bonus&direction={if $direction=='ASC'}DESC{else}ASC{/if}">
+              <table width="60px"><tr><td><div class="arbopr" title="Отсортировать по Баллам">Баллы</div>
+                <div class="{if $direction=='ASC'&&$sort=='Bonus'}z_sort_desc{else}z_sort_asc{/if}"></div>
+              </td></tr></table>
+            </a>
+          </div>
+      </td>
+      <td width="128px">
+          <div class="{if $sort=='Price'} z_sort_active {else} z_sort_inactive {/if}">
+            <a href="/search&searchstring={$searchstring}&sort=Price&direction={if $direction=='ASC'}DESC{else}ASC{/if}">
+              <table width="80px"><tr><td><div class="arbopr" title="Отсортировать по Цене">Цена</div>
+                <div class="{if $direction=='ASC'&&$sort=='Price'}z_sort_desc{else}z_sort_asc{/if}"></div>
+              </td></tr></table>
+            </a>
+          </div>
+      </td>
+      <td>
+      </td>
+      <td width="70px">
+          <div class="ost">
+            Остаток
+          </div>
+      </td>
+      <td width="55px">
+          <div class="zakaz">Заказано</div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<div class="scroll-pane1">
+	<table cellpadding="0" style='margin-top:10px; width:100%;'>
+		{section name=i1 loop=$products_to_show max=$products_to_show_count}
+			<tr>
+				<td valign="top" width="100%">
+					{*include file="product_brief_search.html" product_info=$products_to_show[i1]*}
+			{* product brief view (from a category or search) *}
+		 
+			{if $products_to_show[i1] ne NULL}
+			{if $products_to_show[i1].slug}
+			{assign var=_product_url value="?ukey=product&productID=`$products_to_show[i1].productID`&product_slug=`$products_to_show[i1].slug`"|set_query_html}
+			{else}
+			{assign var=_product_url value="?ukey=product&productID=`$products_to_show[i1].productID`"|set_query_html}
+			{/if}
+			{if $widget}{assign var=_form_action_url value="&view=noframe&external=1"}{/if}
+			{assign var=_cnt value=''}
+			<table class='cs_product_info'>
+				<tbody>
+					<tr>
+						<td width='160px'>
+							{if $products_to_show[i1].thumbnail && $products_to_show[i1].picture}
+							<a {$target} href='{$_product_url}'><div class="div_izobrag">
+								<img class='preview' width='160px' height='120px' pid='{$smarty.const.URL_PRODUCTS_PICTURES}/{$products_to_show[i1].picture|escape:'url'}' src="{$smarty.const.URL_PRODUCTS_PICTURES}/{$products_to_show[i1].thumbnail|escape:'url'}" alt="{$products_to_show[i1].name|escape:'html'}" title="{$products_to_show[i1].name|escape:'html'}" />
+								</div>{*if $products_to_show[i1].is_specialoffer}{foreach from=$products_to_show[i1].is_specialoffer item=_list}{"multi_`$_list`"|translate}{/foreach}{/if*}
+								<div class="list_label{if $products_to_show[i1].productID|is_akcia_product>0} label_back akcia_label
+								{elseif $products_to_show[i1].productID|is_new_product>0} label_back newitemspostup_label
+								{elseif $products_to_show[i1].productID|is_hitu_product>0} label_back hitu_label
+								{/if}"></div>
+							</a>
+							{else}<div class="div_izobrag">
+								<a href="{$_product_url}">
+									<img class='preview' width='160px' height='120px' src="/img/nophoto.jpg"/>
+								</a></div>
+							{/if}
+						</td>
+						<td>{*if $products_to_show[i1].productID|is_akcia_product>0}
+							<div class='akcia'>АКЦИЯ!{if $products_to_show[i1].productID|akcia_skidka > 0}<span class='akcia' style='font-size:110%;'>&nbsp;-{$products_to_show[i1].productID|akcia_skidka}%</span>{/if}
+							</div>{/if*}
+							
+							{if $products_to_show[i1].productID|akcia_skidka > 0}<div class='akcia'><span class='akcia' style='font-size:110%;'>&nbsp;-{$products_to_show[i1].productID|akcia_skidka}%</span>
+							</div>{/if}
+							<div class='productname'><a href='{$_product_url}'>{$products_to_show[i1].name|escape:'html'|lower|replace:"$searchstring":"<span style='color:red;'>$searchstring</span>"}</a>
+								{*if $products_to_show[i1].productID|is_new_product>0}
+								&nbsp;&nbsp;<span style='color: white; background-color: red;'>&nbsp;Новое!&nbsp;</span>
+								{/if*}
+							</div>
+						</td>
+						<td width='100px'>
+							<div><a href='{$_product_url}'>{$products_to_show[i1].product_code|escape:'html'|lower|replace:"$searchstring":"<span style='color:red;'>$searchstring</span>"}</a></div>
+						</td>
+						<td width='60px'>
+							<div>
+								{if $products_to_show[i1].Bonus/$products_to_show[i1].Price>2}
+								<span style='color: red; font-size: 14px;'><b>{$products_to_show[i1].Bonus|string_format:"%d"}</b></span>
+								{else}
+								<span class="totalPrice">{$products_to_show[i1].Bonus|string_format:"%d"}</span>
+								{/if}
+							</div>
+						</td>
+						{if $products_to_show[i1].productID|is_zakaz_product>0}
+						
+						<td width='80px'>
+							<div>
+								<span style='color: red;font-size: 14px;'><i>под заказ!</i></span><br /><span style='color: grey;'><b>{$products_to_show[i1].PriceWithUnit}</b></span>
+								
+							</div>
+						</td>
+						{elseif $products_to_show[i1].productID|is_akcia_product>0}
+						
+						<td width='80px'>
+							<div class='akcia'>{$products_to_show[i1].PriceWithUnit}<br /><span class='list_price'>{$products_to_show[i1].list_price|string_format:"%.2f"}&nbsp;грн.</span>
+							</div>
+						</td>
+						{else}
+						<td width='80px'>
+							<div>
+								<span class="price">{$products_to_show[i1].PriceWithUnit}</span>
+							</div>
+						</td>
+						{/if}
+						<td>
+						</td>
+						<td width='175px'>
+							{if $currencies_count ne 0 && $products_to_show[i1].Price > 0}
+							<div class="pravay_chast">
+								{*cpt_product_add2cart_button request_product_count='request_product_count' overridestyle=':qa8pav'*}
+								{if $products_to_show[i1].ordering_available && $products_to_show[i1].Price>0 && ( $smarty.const.CONF_SHOW_ADD2CART eq 1 ) && ( $smarty.const.CONF_CHECKSTOCK==0 || $products_to_show[i1].in_stock > 0 ) }
+								<table width='175px'>
+									<tbody>
+										<tr>
+											<td>
+												<input name="product_qty" id='qty{$products_to_show[i1].productID}' class="cart_product_quantity" pid='{$products_to_show[i1].productID}' type="text" size="2" value="" title='Количество'
+												{literal}
+												onkeypress='if (event.keyCode == 13){add_2cart("#qty{/literal}{$products_to_show[i1].productID}{literal}");}'>&nbsp;
+												{/literal}
+												
+											</td>
+											<td style='vertical-align:middle;white-space:nowrap;'>
+												<div class="ostatok_div">
+													&nbsp;{$products_to_show[i1].ostatok}&nbsp;шт.
+												</div>
+											</td>
+											<td>
+												<td style='vertical-align:middle;'>
+													<button class="z_add_cart" onclick='add_2cart("#qty{$products_to_show[i1].productID}");' type="button">
+														<div id="zpid_{$products_to_show[i1].productID}" style='margin-top:3px; margin-right:-14px;'>{z_shopping_count productID=$products_to_show[i1].productID}</div>
+													</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+									{elseif $smarty.const.CONF_SHOW_ADD2CART eq 1 && $smarty.const.CONF_CHECKSTOCK && !$products_to_show[i1].in_stock && $products_to_show[i1].ordering_available}
+									<div class="prd_out_of_stock">{lbl_prd_out_of_stock}</div>
+									{/if}
+								</div>
+								{/if}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class='delimiter'></div>
+				
+				
+				
+				{if $products_to_show[i1].ordering_available && $products_to_show[i1].Price>0 && ( $smarty.const.CONF_SHOW_ADD2CART eq 1 ) && ( $smarty.const.CONF_CHECKSTOCK==0 || $products_to_show[i1].in_stock > 0 ) }
+				{elseif $smarty.const.CONF_SHOW_ADD2CART eq 1 && $smarty.const.CONF_CHECKSTOCK && !$products_to_show[i1].in_stock && $products_to_show[i1].ordering_available}
+				<div class="prd_out_of_stock">{lbl_prd_out_of_stock}</div>
+				{/if}
+				
+				{/if}
+				</td>
+			</tr>
+		{/section}
+	</table>
+</div>
+	{if $search_navigator}<p class='navigator bottom-nav'>{$search_navigator}</p>{/if}
+
+{*
+@features "Products comparison"
+*}
+	{*if $smarty.const.CONF_ALLOW_COMPARISON_FOR_SIMPLE_SEARCH}
+	{include file="comparison_products_button.html"}
+	{/if*}
+{*
+@features
+*}
+
+{else}
+	<p>{"srch_no_matches_found"|translate}
+{/if}
